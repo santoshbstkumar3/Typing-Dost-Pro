@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Typing Portal - English & Hindi Inscript</title>
+    <style>
+        :root {
+            --header-blue: #1a3c6d;
+            --input-green: #d4f8a0;
+            --border-grey: #333;
+        }
+
+        body { 
+            margin: 0; 
+            font-family: Georgia, serif; 
+            background-color: #f0f0f0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            overflow: hidden; 
+        }
+
+        header { 
+            background-color: var(--header-blue); 
+            color: white; 
+            padding: 8px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 3px solid #000; 
+        }
+
+        .header-left { display: flex; flex-direction: column; gap: 5px; }
+        .header-left h1 { margin: 0; font-size: 18px; font-weight: normal; }
+        
+        .controls-row { display: flex; gap: 10px; align-items: center; }
+        select { padding: 2px; font-size: 13px; cursor: pointer; border-radius: 2px; }
+
+        .font-btn { 
+            background: white; border: 1px solid #ccc; 
+            padding: 1px 8px; cursor: pointer; font-weight: bold; 
+            font-size: 12px; border-radius: 2px; color: #000;
+        }
+
+        .user-info { 
+            display: flex; align-items: center; gap: 12px; 
+            background: rgba(255,255,255,0.1); 
+            padding: 5px 15px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .user-icon { width: 40px; height: 45px; background: white; border-radius: 2px; }
+        .user-details { font-size: 13px; font-weight: bold; line-height: 1.3; }
+
+        .timer-box { font-size: 24px; font-weight: bold; min-width: 150px; text-align: right; }
+
+        main { padding: 5px; flex-grow: 1; display: flex; flex-direction: column; gap: 5px; }
+
+        .source-text-container {
+            background: white; 
+            border: 1px solid var(--border-grey); 
+            height: 380px; 
+            overflow-y: scroll; 
+            padding: 25px; 
+            font-size: 22px; 
+            line-height: 1.6; 
+            color: #000; 
+            text-align: justify;
+            user-select: none;
+        }
+
+        .typing-container { 
+            background-color: var(--input-green); 
+            border: 2px solid var(--border-grey); 
+            height: 160px; 
+            padding: 10px; 
+        }
+
+        textarea { 
+            width: 100%; height: 100%; 
+            background: transparent; border: none; 
+            resize: none; font-size: 22px; 
+            outline: none; font-family: inherit; 
+            color: #000;
+        }
+
+        .footer-actions { 
+            display: flex; justify-content: center; 
+            padding: 10px; background: #e8e8e8; border-top: 1px solid #ccc;
+        }
+        .btn { border: 1px solid #999; padding: 8px 40px; cursor: pointer; font-weight: bold; text-transform: uppercase; margin: 5px; }
+        .btn-grey { background-color: #e0e0e0; }
+        .btn-blue { background-color: var(--header-blue); color: white; border: none; }
+
+        #testPage { display: flex; flex-direction: column; height: 100vh; }
+        #resultPage { display: none; flex-direction: column; height: 100vh; background: white; padding: 40px; overflow-y: auto; align-items: center; }
+        
+        .result-box { width: 600px; padding: 40px; border: 10px double var(--header-blue); text-align: center; background: #fff; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #resultPage, #resultPage * { visibility: visible; }
+            #resultPage { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="testPage">
+        <header>
+            <div class="header-left">
+                <h1>Official Typing Portal</h1>
+                <div class="controls-row">
+                    <select id="langSelect" onchange="updateLessonList()">
+                        <option value="en">English (History)</option>
+                        <option value="hi">Hindi (Inscript)</option>
+                    </select>
+                    <select id="lessonSelect" onchange="loadLesson()"></select>
+                    <button class="font-btn" onclick="changeSize(1)">A+</button>
+                    <button class="font-btn" onclick="changeSize(0)">A</button>
+                    <button class="font-btn" onclick="changeSize(-1)">A-</button>
+                </div>
+            </div>
+
+            <div class="user-info">
+                <img src="https://www.w3schools.com/howto/img_avatar.png" class="user-icon" alt="Avatar">
+                <div class="user-details">ROLL NO : 55689<br>NAME : DUMMY_USER</div>
+            </div>
+
+            <div class="timer-box" id="timer">Time Left 15:00</div>
+        </header>
+
+        <main>
+            <div class="source-text-container" id="sourceText"></div>
+            <div class="typing-container">
+                <textarea id="typingArea" spellcheck="false" autofocus placeholder="The timer will start automatically when you begin typing..."></textarea>
+            </div>
+        </main>
+
+        <div class="footer-actions">
+            <button class="btn btn-grey" onclick="endTest()">End Typing Test</button>
+        </div>
+    </div>
+
+    <div id="resultPage">
+        <div class="result-box">
+            <h1 style="margin:0; color: var(--header-blue);">TYPING TEST CERTIFICATE</h1>
+            <p style="font-style: italic;">Official Performance Report</p>
+            <hr>
+            <div style="text-align: left; display: inline-block; width: 80%; margin: 20px 0; font-size: 18px;">
+                <p><strong>Candidate Name:</strong> DUMMY_USER</p>
+                <p><strong>Roll Number:</strong> 55689</p>
+                <p><strong>Date:</strong> <span id="resDate"></span></p>
+                <p><strong>Language:</strong> <span id="resLang"></span></p>
+            </div>
+            <div style="background: #f9f9f9; padding: 20px; border: 1px solid #ccc;">
+                <p style="font-size: 28px; margin: 10px 0;">Net Speed: <strong id="resWpm" style="color: green;">0</strong> WPM</p>
+                <p style="font-size: 28px; margin: 10px 0;">Accuracy: <strong id="resAcc" style="color: blue;">0</strong> %</p>
+            </div>
+            <p style="margin-top:20px;">Correct Words: <span id="resCorrect">0</span> | Errors: <span id="resWrong">0</span></p>
+        </div>
+        <div class="no-print" style="margin-top: 30px;">
+            <button class="btn btn-blue" onclick="window.print()">Print Certificate</button>
+            <button class="btn btn-grey" onclick="location.reload()">Restart Test</button>
+        </div>
+    </div>
+
+    <script>
+        const inscriptMap = {
+            'q':'ौ','w':'ै','e':'ा','r':'ी','t':'ू','y':'ब','u':'ह','i':'ग','o':'द','p':'ज','[':'ड',']':'ृ',
+            'a':'ो','s':'े','d':'्','f':'ि','g':'ु','h':'प','j':'र','k':'क','l':'त',';':'च','\'':'ट',
+            'z':'़','x':'ं','c':'म','v':'न','b':'व','n':'ल','m':'स',',':'य','.':'।','/':'य','Q':'ौ','W':'ै','E':'ा','R':'ी','T':'ू','Y':'ब','U':'ह','I':'ग','O':'द','P':'ज','A':'ो','S':'े','D':'अ','F':'इ','G':'उ','H':'फ','J':'र','K':'ख','L':'थ',':':'छ','"':'ठ','Z':'़','X':'ं','C':'ण','V':'न','B':'व','N':'ल','M':'श','<':'य','>':'।','?':'य',' ':' '
+        };
+
+        const lessons = {
+            en: [
+                "The Mauryan Empire, founded by Chandragupta Maurya around 322 BCE, was one of the largest and most powerful political and military empires in ancient India. It spanned across most of the Indian subcontinent, centralizing power in a way never seen before. Chandragupta, advised by the brilliant strategist Chanakya, overthrew the Nanda Dynasty and established a vast administration. However, the empire reached its moral and cultural peak under his grandson, Ashoka the Great. Ashoka began his reign as a traditional conqueror, seeking to expand his borders through military force. The turning point in his life was the Kalinga War, a bloody conflict that resulted in massive loss of life and suffering. Haunted by the violence he witnessed, Ashoka underwent a deep spiritual transformation. He embraced Buddhism and the philosophy of Dhamma, which emphasized non-violence, social welfare, and religious tolerance. Rather than conquering lands through war, he sought to conquer the hearts of people through righteousness. He commissioned the construction of thousands of stupas and monasteries and had his edicts carved onto rocks and massive stone pillars. These pillars were placed in strategic locations throughout the empire, spreading messages of peace, honesty, and respect for all living beings. Ashoka’s administration focused on building hospitals, planting trees along roads, and digging wells for travelers. His reign proved that a monarch could rule a vast territory not just with a sword, but with moral authority. Even after the decline of the Mauryan Empire, Ashoka’s legacy remained a symbol of enlightened governance. Modern India honored this heritage by adopting the Lion Capital of Ashoka as its national emblem and the Wheel of Dhamma on its national flag. The story of the Mauryan Empire remains a fascinating study of how power can be balanced with compassion. It shows that the true strength of a nation lies in the character of its leaders and the welfare of its subjects. Today, historians look back at this era as a golden period of Indian history where art, architecture, and ethics flourished together.",
+                "The Indus Valley Civilization, also known as the Harappan Civilization, represents one of the earliest urban cultures in human history. Flourishing around 2500 BCE in the fertile basins of the Indus River, this civilization was remarkably advanced for its time. Unlike the contemporary civilizations of Egypt and Mesopotamia, which focused on monumental temples and tombs, the people of the Indus Valley prioritized urban planning and civic amenities. Excavations at major sites like Harappa and Mohenjo-Daro have revealed cities that were built on a sophisticated grid system. The streets were laid out in straight lines, intersecting at right angles, which suggests a high degree of administrative control and engineering skill. One of the most striking features was their advanced drainage system. Every house had a connection to a main sewer line, a feat of sanitation that was not matched in many parts of the world for several centuries. The houses themselves were built with standardized burnt bricks and often featured multiple stories and central courtyards. Agriculture was the backbone of their economy, supported by the seasonal flooding of the river. They grew wheat, barley, and peas, and were among the first to cultivate cotton for clothing. Trade was another vital component of their society. Archaeologists have found Indus seals in Mesopotamia, proving that they maintained long-distance commercial relations. These seals, often made of steatite and decorated with animal figures and script, remain one of the great mysteries of history because their language has not yet been deciphered. Despite their technological prowess, the civilization eventually began to decline around 1900 BCE. The exact cause of this collapse remains a subject of intense debate among historians and scientists. Some suggest that a shift in the course of the Indus River led to devastating floods or droughts, while others point to a decline in trade or the arrival of new groups of people. Regardless of how it ended, the Indus Valley Civilization left a lasting impact on the culture of the Indian subcontinent.",
+                "Mughal architecture is a magnificent blend of Islamic, Persian, and Indian styles that reached its peak during the sixteenth and seventeenth centuries. This unique architectural language began with Babur, but it was under the Great Mughals—Akbar, Jahangir, and Shah Jahan—that it truly flourished. The hallmark of this style is the use of large bulbous domes, slender minarets at the corners, massive halls, and large vaulted gateways. Akbar the Great was instrumental in the early development of this style. His construction of Fatehpur Sikri, a city made almost entirely of red sandstone, demonstrated a fusion of local Rajput traditions with Persian influences. The Buland Darwaza, standing as a massive entrance to the mosque there, remains one of the most impressive gateways in the world. As the empire grew wealthier, the choice of materials shifted from red sandstone to refined white marble. This transition is most visible in the works of Shah Jahan, the greatest builder of the dynasty. His most famous creation, the Taj Mahal in Agra, is considered a masterpiece of world heritage. Built as a tomb for his beloved wife Mumtaz Mahal, the structure is perfectly symmetrical and decorated with intricate pietra dura work, where semi-precious stones are inlaid into the marble to create floral patterns. Beyond tombs and mosques, the Mughals were also famous for their love of nature and gardens. The Charbagh layout, a quadrilateral garden divided by walking paths or flowing water, was a signature feature of their palaces and forts. These gardens were meant to represent a paradise on earth, offering a cool and serene environment amidst the heat of the plains. The Red Fort in Delhi and the Agra Fort are prime examples of how the Mughals combined military strength with aesthetic beauty. Inside these forts, the Diwan-i-Aam and Diwan-i-Khas served as the venues for royal audiences, featuring pillars and arches that were often gilded with gold and silver.",
+                "The French Revolution, which began in 1789, stands as one of the most pivotal events in the history of the modern world. It was a period of far-reaching social and political upheaval in France that ultimately led to the end of the monarchy. Before the revolution, French society was divided into three estates: the clergy, the nobility, and the commoners. The first two estates enjoyed immense privileges and paid almost no taxes, while the Third Estate bore the entire financial burden of the state. Economic hardship, caused by years of war and poor harvests, pushed the common people to the brink of starvation. Influenced by Enlightenment ideas of liberty and equality, the people began to question the absolute power of King Louis XVI. The storming of the Bastille on July 14, 1789, marked the beginning of the open rebellion. This was followed by the Declaration of the Rights of Man and of the Citizen, which proclaimed that all men were born free and equal. However, the path to democracy was not smooth. The revolution soon turned violent during the Reign of Terror, where thousands were executed by the guillotine. Despite the chaos, the revolution succeeded in destroying the old feudal system. It introduced the concept of nationalism and the idea that sovereignty belongs to the people rather than a divinely appointed ruler. Napoleon Bonaparte eventually rose to power in the aftermath, spreading revolutionary ideals across Europe through his military conquests. Although Napoleon became an emperor, the legal reforms he introduced, known as the Napoleonic Code, preserved many revolutionary principles. The French Revolution served as a blueprint for many other democratic movements throughout the nineteenth and twentieth centuries. It challenged the traditional authority of kings and the church, paving the way for the rise of secularism and representative government. Today, the values of liberty, equality, and fraternity remain the core of the French Republic and continue to inspire democratic struggles globally.",
+                "The Silk Road was an ancient network of trade routes that connected the East and West for over a thousand years. It was not a single path, but a series of land and sea routes stretching from China to the Mediterranean Sea. While it was named for the lucrative Chinese silk that was highly prized in Rome, the Silk Road carried much more than just fabric. It was a massive highway for the exchange of goods, ideas, technologies, and religions. Merchants traveled in large caravans across dangerous deserts and high mountain passes, stopping at bustling oasis cities like Samarkand and Kashgar. Along with silk, the East exported spices, tea, porcelain, and paper, while the West traded gold, silver, glassware, and horses. The spread of papermaking technology from China to the Middle East and then to Europe was one of the most significant impacts of this trade. Perhaps even more important than the physical goods was the movement of people and their beliefs. Buddhism spread from India to China and Japan along these routes, while Islam moved eastward into Central Asia. Artistic styles, musical instruments, and culinary traditions also blended together, creating a unique cosmopolitan culture in the trading hubs. The Silk Road also had a darker side, as it facilitated the spread of diseases like the Black Death, which devastated populations in Asia and Europe. However, the overall legacy of the Silk Road is one of connectivity. It proved that despite vast distances and geographical barriers, human civilizations have a natural drive to interact and trade. This network laid the foundations for the modern globalized world. When sea routes became more efficient in the fifteenth century, the land routes of the Silk Road began to decline. Yet, its historical significance remains unmatched as the first great bridge between the diverse cultures of the Eurasian continent. Today, the spirit of the Silk Road is being revived through modern infrastructure projects aimed at boosting regional cooperation and trade once again.",
+                "The American Civil War, fought from 1861 to 1865, was the most defining conflict in the history of the United States. It was a brutal struggle between the Northern states, known as the Union, and the Southern states, known as the Confederacy. The primary cause of the war was the deep-seated disagreement over the institution of slavery. The Northern economy was becoming increasingly industrialized and many people there viewed slavery as a moral evil. In contrast, the Southern economy was built on large-scale agriculture, particularly cotton, which relied heavily on the labor of enslaved African Americans. When Abraham Lincoln was elected president in 1860, several Southern states seceded from the Union, fearing he would abolish slavery. The war began at Fort Sumter and grew into a massive conflict with hundreds of battles across the country. It was a war of unprecedented scale, involving millions of soldiers and resulting in the deaths of over six hundred thousand people. In 1863, Lincoln issued the Emancipation Proclamation, which declared that all enslaved people in Confederate territory were to be set free. This shifted the focus of the war from preserving the Union to a crusade for human freedom. The Union’s industrial strength and larger population eventually overwhelmed the South. The war ended with the surrender of General Robert E. Lee at Appomattox. The victory of the North ensured that the United States would remain a single, unified nation and led to the total abolition of slavery through the Thirteenth Amendment. However, the period of Reconstruction that followed was difficult, and it took another century for the civil rights movement to address the deep inequalities that remained. The Civil War transformed American society, centralizing the power of the federal government and setting the stage for the country's rise as a global power. It remains a somber reminder of the cost of division and the enduring struggle for equality and justice for all citizens.",
+                "The Renaissance was a fervent period of European cultural, artistic, political, and economic rebirth following the Middle Ages. Generally described as taking place from the fourteenth century to the seventeenth century, the Renaissance promoted the rediscovery of classical philosophy, literature, and art. It began in the Italian city-states, particularly Florence, where wealthy merchant families like the Medicis provided the financial support for artists and thinkers. One of the core philosophies of the Renaissance was humanism, which emphasized the value and agency of human beings. Unlike the previous era, which focused heavily on religious devotion, humanists encouraged the study of grammar, rhetoric, history, and poetry. This shift in thinking led to incredible breakthroughs in the arts. Legendary figures like Leonardo da Vinci, Michelangelo, and Raphael created masterpieces that focused on realism and human emotion. Leonardo’s Mona Lisa and Michelangelo’s David became symbols of human potential and beauty. In science, the Renaissance saw the birth of the scientific method. Figures like Nicolaus Copernicus and Galileo Galilei challenged long-held beliefs about the universe, proving that the Earth revolved around the sun. The invention of the printing press by Johannes Gutenberg was another turning point, as it allowed for the mass production of books and the rapid spread of new ideas across Europe. This led to a dramatic increase in literacy rates and empowered the common people to think for themselves. The Renaissance was not just about art and science; it also saw major changes in politics and exploration. Sailors like Christopher Columbus and Vasco da Gama embarked on long voyages, expanding the known world and creating new trade routes. The era marked the transition from the medieval world to the early modern age. It celebrated human achievement and curiosity, laying the groundwork for the Enlightenment and the industrial revolution. The legacy of the Renaissance is still visible today in our modern education systems.",
+                "The Magna Carta, or the Great Charter, is one of the most famous documents in history. Signed in June 1215 at Runnymede, England, it was an agreement between King John and a group of rebellious barons. At the time, King John was an unpopular ruler who had demanded heavy taxes and ignored traditional laws. The barons, tired of his arbitrary rule, forced him to sign a document that would limit his power and protect their rights. Although it was originally intended to address specific grievances of the nobility, the Magna Carta introduced several revolutionary legal concepts. The most important was the principle that the king was not above the law. It established that no person could be imprisoned or punished except by the lawful judgment of their peers or by the law of the land. This laid the early foundation for the concept of due process and the right to a fair trial. The document also addressed issues such as the protection of church rights, freedom from illegal imprisonment, and limits on feudal payments to the Crown. While King John soon ignored the charter and England plunged into civil war, the Magna Carta was reissued several times by his successors. Over the centuries, it became a powerful symbol of liberty and a defense against tyranny. Its influence spread far beyond England, serving as a primary source for the United States Constitution and the Bill of Rights. Many of the legal systems in the modern world are still based on the core idea that government power must be regulated by written laws. The Magna Carta transformed the relationship between the ruler and the ruled, turning subjects into citizens with recognized rights. It proved that even the most powerful monarch could be held accountable by his people. Today, it is regarded as the cornerstone of modern democracy and the rule of law, reminding us that justice must be applied equally to everyone, regardless of their status or wealth.",
+                "The Meiji Restoration was a major turning point in Japanese history that occurred in 1868. For over two centuries, Japan had been ruled by the Tokugawa Shogunate, a military government that kept the country isolated from the rest of the world. However, the arrival of American warships led by Commodore Matthew Perry in 1853 forced Japan to open its ports to international trade. This caused a deep crisis within the country, as many Japanese felt that the Shogunate was too weak to protect them from Western imperialism. A group of young samurai and officials overthrew the Shogunate and restored the emperor to his traditional position as the supreme leader. This marked the beginning of the Meiji era, named after Emperor Meiji. The new government embarked on a rapid and ambitious program of modernization and westernization. They abolished the old feudal system and the samurai class, creating a centralized government and a modern national army. Education was made mandatory for all children, and the government sent students abroad to learn about Western technology and science. Japan’s economy was transformed as the government built railroads, telegraph lines, and modern factories. In just a few decades, Japan went from being an isolated agrarian society to a powerful industrial nation. They adopted a Western-style constitution and established a parliament. However, this rapid growth also led to a rise in nationalism and a desire for overseas expansion. Japan’s military victories against China and Russia shocked the world and established Japan as a major global power. The Meiji Restoration is a unique example in history of a country successfully modernizing itself on its own terms to avoid colonization. It changed every aspect of Japanese life, from the way people dressed to the way they were governed. This era laid the foundation for modern Japan and showed that a nation could preserve its cultural identity while embracing modern progress.",
+                "The Cold War was a period of intense political, military, and economic tension between the United States and the Soviet Union that lasted from the end of World War II until 1991. It was called a cold war because the two superpowers never engaged in a full-scale direct military conflict. Instead, they fought through proxy wars, espionage, and a massive nuclear arms race. The root of the conflict was the fundamental difference between the democratic, capitalist system of the United States and the communist system of the Soviet Union. After the defeat of Nazi Germany, Europe was divided into two camps: the Western Bloc and the Eastern Bloc. The Berlin Wall became the most visible symbol of this division, separating East and West Berlin. Both sides built thousands of nuclear weapons, leading to a state of Mutual Assured Destruction, where any direct war would result in the total destruction of both nations. The competition between the two powers extended into space, known as the Space Race, as they raced to be the first to land a man on the moon. They also competed for influence in the newly independent nations of Africa, Asia, and Latin America, leading to conflicts like the Korean War and the Vietnam War. The Cuban Missile Crisis in 1962 was the closest the world ever came to a nuclear war. Throughout this period, the threat of a global catastrophe hung over the lives of millions of people. Despite the tension, the Cold War also led to major technological advancements and a globalized system of alliances. The conflict finally began to end in the late 1980s as the Soviet economy struggled and political reforms like Glasnost and Perestroika were introduced. The fall of the Berlin Wall in 1989 and the eventual collapse of the Soviet Union in 1991 marked the end of the Cold War era. It left behind a world that was deeply changed, with the United States emerging as the sole global superpower and the beginning of a new age of international relations."
+            ],
+             hi: [
+                "मौर्य साम्राज्य प्राचीन भारत का सबसे विशाल और शक्तिशाली साम्राज्य था जिसकी स्थापना चन्द्रगुप्त मौर्य ने चाणक्य की सहायता से की थी। यह साम्राज्य उत्तर में हिमालय से लेकर दक्षिण में मैसूर तक और पूर्व में बंगाल से लेकर पश्चिम में अफगानिस्तान तक फैला हुआ था। चन्द्रगुप्त ने नन्द वंश के अंतिम शासक को पराजित कर मगध की सत्ता पर अधिकार किया था। इस साम्राज्य का सबसे महान शासक अशोक था जिसने कलिंग युद्ध के भीषण नरसंहार के बाद हिंसा का मार्ग त्याग दिया और बौद्ध धर्म को अपना लिया। अशोक ने धम्म का प्रचार किया और शिलालेखों के माध्यम से प्रजा को नैतिक जीवन जीने का संदेश दिया। मौर्य काल में प्रशासन बहुत ही सुव्यवस्थित था और अर्थव्यवस्था मुख्य रूप से कृषि और व्यापार पर आधारित थी। चाणक्य द्वारा रचित अर्थशास्त्र उस समय की राजनीति और शासन व्यवस्था की विस्तृत जानकारी प्रदान करता है। सम्राट अशोक ने जनकल्याण के लिए अनेक चिकित्सालय बनवाए और सड़कों के किनारे छायादार वृक्ष लगवाए। इसी काल में कला और स्थापत्य का भी बहुत विकास हुआ जिसका उदाहरण सारनाथ का सिंह स्तंभ है। मौर्य साम्राज्य ने भारत को पहली बार एक राजनीतिक सूत्र में पिरोने का कार्य किया था। हालांकि अशोक के बाद उत्तराधिकारियों की कमजोरी के कारण इस महान साम्राज्य का पतन हो गया। मगध की धरती पर उपजा यह साम्राज्य आज भी भारतीय गौरव का प्रतीक माना जाता है। चन्द्रगुप्त की वीरता और अशोक की करुणा दोनों ही इतिहास के पन्नों में स्वर्णाक्षरों में दर्ज हैं। इस युग ने भारतीय संस्कृति को एक नई दिशा दी और बौद्ध धर्म को विश्व स्तर पर पहुँचाया। मौर्य शासन की कुशलता का लोहा उस समय के विदेशी यात्रियों जैसे मेगस्थनीज ने भी माना था। आज भी भारत का राष्ट्रीय चिह्न मौर्यकालीन कला की ही देन है जो हमारी प्राचीन विरासत की महानता को दर्शाता है। यह साम्राज्य केवल सैन्य विजयों के लिए नहीं बल्कि प्रशासनिक सुधारों और नैतिक उत्थान के लिए भी याद किया जाता है। भारतीय उपमहाद्वीप में मौर्यों का योगदान अतुलनीय और प्रेरणादायक रहा है। उनके द्वारा स्थापित की गई सीमाएं और प्रशासनिक ढांचा आने वाले कई राजवंशों के लिए एक आदर्श मॉडल बना रहा। अतः मौर्य वंश भारतीय इतिहास की एक युगांतकारी घटना है जिसने भारत की वैश्विक पहचान बनाई थी।",
+            "सिंधु घाटी सभ्यता विश्व की सबसे प्राचीन नगरीय सभ्यताओं में से एक है जो लगभग ढाई हजार ईसा पूर्व फली-फूली थी। इस सभ्यता की खोज बीसवीं शताब्दी के आरंभ में हुई जब हड़प्पा और मोहनजोदड़ो जैसे स्थलों की खुदाई की गई। यहाँ की सबसे प्रमुख विशेषता इसकी उन्नत नगर नियोजन प्रणाली थी। नगरों को एक निश्चित ग्रिड पद्धति पर बसाया गया था जहाँ सड़कें एक-दूसरे को समकोण पर काटती थीं। यहाँ की जल निकासी व्यवस्था इतनी आधुनिक थी कि आज के समय में भी वह आश्चर्यजनक लगती है। घरों का निर्माण पकी हुई ईंटों से किया जाता था और हर घर में एक स्नानघर और आंगन होता था। सिंधु सभ्यता के लोग कृषि और व्यापार दोनों में निपुण थे और उनके संबंध मेसोपोटामिया जैसी विदेशी सभ्यताओं से भी थे। वे गेहूँ और कपास की खेती करते थे तथा मिट्टी के सुंदर बर्तन और आभूषण बनाने में माहिर थे। यहाँ से प्राप्त मुहरों पर अंकित चित्र उनकी लिपि और धार्मिक विश्वासों के बारे में जानकारी देते हैं हालांकि उनकी लिपि को अभी तक पढ़ा नहीं जा सका है। खुदाई में मिले विशाल स्नानागार और अन्नागार उस समय की सामाजिक और आर्थिक समृद्धि को दर्शाते हैं। समाज संभवतः वर्गों में विभाजित था लेकिन शांतिप्रिय था क्योंकि यहाँ से बड़े हथियारों के अवशेष नहीं मिले हैं। इस सभ्यता का पतन कैसे हुआ यह आज भी इतिहासकारों के बीच एक विवादास्पद विषय बना हुआ है। कुछ लोग जलवायु परिवर्तन को जिम्मेदार मानते हैं तो कुछ भीषण बाढ़ या विदेशी आक्रमणों को कारण बताते हैं। कारण जो भी रहा हो लेकिन इस सभ्यता ने नगरीय जीवन की एक ऐसी मिसाल पेश की जो आज भी प्रेरणादायक है। लोथल जैसे बंदरगाहों से पता चलता है कि उनकी समुद्री व्यापारिक शक्ति कितनी मजबूत थी। वे मापन और तौल की सटीक प्रणालियों का उपयोग करते थे जो उनकी वैज्ञानिक समझ का प्रमाण है। मातृसत्तात्मक समाज के संकेतों के साथ उनकी मूर्तियाँ और खिलौने उनके समृद्ध सांस्कृतिक जीवन की झलक देते हैं। यह सभ्यता भारतीय उपमहाद्वीप के इतिहास की पहली नगरीय क्रांति थी जिसने भविष्य की संस्कृतियों के लिए एक मजबूत आधार तैयार किया। आज भी हड़प्पाकालीन अवशेष हमें अपने पूर्वजों की बुद्धिमत्ता और मेहनत की याद दिलाते हैं। सिंधु घाटी की विरासत हमारे इतिहास का अमूल्य हिस्सा है।",
+
+            "मराठा साम्राज्य का उदय सत्रहवीं शताब्दी में छत्रपति शिवाजी महाराज के नेतृत्व में हुआ था जिन्होंने मुगलों की सत्ता को चुनौती दी थी। शिवाजी महाराज एक साहसी योद्धा होने के साथ-साथ एक दूरदर्शी प्रशासक और रणनीतिकार भी थे। उन्होंने दक्कन के पठार पर एक स्वतंत्र हिंदू साम्राज्य की स्थापना का संकल्प लिया जिसे हिंदवी स्वराज्य कहा गया। उन्होंने अपनी छोटी सी सेना के साथ मुगलों और बीजापुर के सुल्तानों के खिलाफ छापामार युद्ध नीति का सफल प्रयोग किया। शिवाजी महाराज ने किलों के महत्व को समझा और लगभग तीन सौ से अधिक किलों का निर्माण और जीर्णोद्धार कराया। उनकी नौसेना ने कोंकण तट की रक्षा की और विदेशी आक्रमणकारियों को कड़ा मुकाबला दिया। उनका शासन प्रबंध 'अष्टप्रधान' परिषद द्वारा चलाया जाता था जिसमें आठ महत्वपूर्ण मंत्री होते थे। शिवाजी महाराज ने न्याय और समानता पर आधारित समाज बनाने का प्रयास किया और महिलाओं के सम्मान की रक्षा को सर्वोपरि रखा। उनके शासनकाल में किसानों से उचित कर लिया जाता था और कृषि को बढ़ावा देने के लिए सिंचाई की व्यवस्था की गई थी। शिवाजी के बाद संभाजी और फिर पेशवाओं के नेतृत्व में मराठा शक्ति का विस्तार पूरे भारत में हुआ। बाजीराव प्रथम जैसे महान पेशवा ने मराठा साम्राज्य को दिल्ली के करीब तक पहुँचा दिया था। मराठा घुड़सवार अपनी गति और बहादुरी के लिए पूरे भारत में प्रसिद्ध थे। अठारहवीं शताब्दी के मध्य तक मराठा भारत की सबसे बड़ी शक्ति बन चुके थे जिन्होंने मुगलों को नाममात्र का शासक बना दिया था। हालांकि 1761 के पानीपत के तीसरे युद्ध में उन्हें भारी क्षति उठानी पड़ी फिर भी उन्होंने अपनी शक्ति को पुनः संगठित किया। मराठों ने अंग्रेजों के साथ भी तीन प्रमुख युद्ध लड़े और अपनी स्वतंत्रता की रक्षा के लिए अंत तक संघर्ष किया। मराठा इतिहास बलिदान और राष्ट्रीय गौरव की एक महान गाथा है जो आज भी हर भारतीय को प्रेरित करती है। शिवाजी का स्वराज्य केवल सत्ता का परिवर्तन नहीं था बल्कि वह जन-जन की मुक्ति का आंदोलन था। उनकी प्रशासनिक नीतियों और सैन्य संगठन की प्रशंसा आज भी आधुनिक इतिहासकारों द्वारा की जाती है। मराठा साम्राज्य ने भारतीय इतिहास में स्वदेशी गौरव और साहस का एक नया अध्याय जोड़ा। उनकी वीरता की कहानियाँ महाराष्ट्र की सीमाओं को पार कर पूरे विश्व में सम्मान के साथ सुनी जाती हैं। मराठा शक्ति का उत्थान भारतीय पुनर्जागरण का एक महत्वपूर्ण हिस्सा था।",
+
+            "भारत का प्रथम स्वतंत्रता संग्राम 1857 में शुरू हुआ था जिसे अक्सर सिपाही विद्रोह के नाम से भी जाना जाता है। यह विद्रोह ब्रिटिश ईस्ट इंडिया कंपनी के शोषणकारी शासन के खिलाफ भारतीयों के वर्षों से जमा हो रहे असंतोष का परिणाम था। विद्रोह की तात्कालिक चिंगारी चर्बी वाले कारतूसों ने लगाई थी जिसने हिंदू और मुस्लिम सैनिकों की धार्मिक भावनाओं को आहत किया। मेरठ में सैनिकों ने विद्रोह का बिगुल फूंका और दिल्ली की ओर कूच कर बहादुर शाह जफर को अपना सम्राट घोषित किया। देखते ही देखते यह विद्रोह कानपुर, लखनऊ, झांसी और बिहार सहित उत्तर भारत के बड़े हिस्से में फैल गया। झांसी की रानी लक्ष्मीबाई ने अपनी वीरता से अंग्रेजों के पसीने छुड़ा दिए और युद्ध के मैदान में वीरगति प्राप्त की। तात्या टोपे, नाना साहब और कुंवर सिंह जैसे नायकों ने अपनी सीमित शक्ति के साथ ब्रिटिश साम्राज्य की जड़ों को हिला दिया। हालांकि अंग्रेजों ने अपनी आधुनिक सैन्य शक्ति और संचार के साधनों का उपयोग कर इस विद्रोह को दबा दिया था। विद्रोह की विफलता के बावजूद इसने भारतीयों के मन में राष्ट्रवाद की एक नई भावना पैदा की। इसके बाद ईस्ट इंडिया कंपनी का शासन समाप्त हो गया और भारत का प्रशासन सीधे ब्रिटिश क्राउन के हाथों में चला गया। ब्रिटिश सरकार ने अपनी नीतियों में बदलाव किया और भारतीय राजाओं के साथ संधि की नीतियों को अपनाया। 1857 की क्रांति ने यह सिद्ध कर दिया कि संगठित होकर भारतीय किसी भी विदेशी शक्ति को चुनौती दे सकते हैं। इस संग्राम ने आने वाले स्वतंत्रता आंदोलनों के लिए एक ठोस आधारभूमि तैयार की। मंगल पांडे का बलिदान और रानी लक्ष्मीबाई का साहस आज भी घर-घर में सुनाया जाता है। इस विद्रोह में समाज के विभिन्न वर्गों जैसे किसानों और ज़मींदारों ने भी सक्रिय भूमिका निभाई थी। यद्यपि यह आंदोलन सैन्य रूप से पराजित हुआ लेकिन नैतिक रूप से यह भारतीयों की जीत थी। इसने अंग्रेजों के मन में यह डर पैदा कर दिया कि वे भारतीयों की इच्छा के विरुद्ध उन पर अधिक समय तक शासन नहीं कर सकते। इतिहासकार सावरकर ने इसे भारत का पहला स्वतंत्रता युद्ध कहा था जो बिल्कुल सत्य प्रतीत होता है। इस महान घटना ने भारतीय चेतना को झकझोर कर रख दिया और स्वतंत्रता की मशाल को प्रज्वलित किया। 1857 की यादें आज भी हमारी राष्ट्रीय एकता का अभिन्न अंग हैं जो हमें गुलामी के विरुद्ध खड़े होने की प्रेरणा देती हैं।",
+
+            "मुगल साम्राज्य की स्थापना 1526 में बाबर ने पानीपत के प्रथम युद्ध में इब्राहिम लोदी को हराकर की थी। बाबर के बाद हुमायूं को अनेक कठिनाइयों का सामना करना पड़ा लेकिन उसके पुत्र अकबर ने साम्राज्य को स्थिरता और भव्यता प्रदान की। अकबर को एक महान शासक माना जाता है क्योंकि उसने धार्मिक सहिष्णुता की नीति अपनाई और 'दीन-ए-इलाही' नामक नए विचार को बढ़ावा दिया। उसने राजपूतों के साथ वैवाहिक और राजनीतिक संबंध स्थापित कर साम्राज्य को मजबूती दी। मुगल काल अपनी भव्य वास्तुकला के लिए विश्व भर में प्रसिद्ध है जिसका चरम शाहजहाँ के शासनकाल में देखने को मिलता है। ताजमहल जो कि सफेद संगमरमर से निर्मित है आज भी दुनिया के सात अजूबों में शुमार किया जाता है। दिल्ली का लाल किला और जामा मस्जिद भी मुगल स्थापत्य कला के उत्कृष्ट उदाहरण हैं। जहांगीर के समय में चित्रकला ने नई ऊंचाइयों को छुआ और शाही दरबार कला का प्रमुख केंद्र बन गया। मुगलों ने भारत में एक केंद्रीकृत प्रशासनिक व्यवस्था और मनसबदारी प्रथा लागू की थी। हालांकि औरंगजेब की कट्टर नीतियों और लंबे समय तक चले युद्धों ने साम्राज्य की आर्थिक स्थिति को कमजोर कर दिया। उसके बाद के उत्तराधिकारी अयोग्य सिद्ध हुए जिससे साम्राज्य का पतन तेजी से होने लगा। 18वीं शताब्दी तक मुगल सत्ता केवल दिल्ली के आसपास ही सिमट कर रह गई थी। अंतिम मुगल सम्राट बहादुर शाह जफर थे जिन्हें 1857 के विद्रोह के बाद अंग्रेजों ने रंगून भेज दिया था। मुगल काल ने भारतीय संस्कृति में खान-पान, पहनावे और संगीत के क्षेत्र में एक नई मिश्रित संस्कृति को जन्म दिया जिसे गंगा-जमुनी तहजीब कहा जाता है। इस युग में फारसी भाषा को राजभाषा का दर्जा मिला लेकिन साथ ही उर्दू का भी विकास हुआ। मुगल बाग-बगीचे और शहरी नियोजन की उनकी शैली आज भी कई शहरों की पहचान है। यद्यपि मुगल शासन के दौरान कई उतार-चढ़ाव आए लेकिन उन्होंने भारत के इतिहास पर अपनी अमिट छाप छोड़ी है। उनकी प्रशासनिक कुशलता और कलात्मक उपलब्धियों का अध्ययन आज भी किया जाता है। भारतीय इतिहास में मुगलों का योगदान वास्तुकला और प्रशासनिक एकीकरण के रूप में हमेशा याद रखा जाएगा। अकबर की उदारता और शाहजहाँ की कलात्मकता इस वंश के सुनहरे पन्नों की गवाही देते हैं। मुगलों के पतन ने भारत में ब्रिटिश सत्ता के आगमन का मार्ग प्रशस्त किया था जो एक नए युग की शुरुआत थी।",
+
+            "गुप्त राजवंश का शासनकाल प्राचीन भारतीय इतिहास का स्वर्ण युग माना जाता है क्योंकि इस दौरान कला और विज्ञान में अभूतपूर्व प्रगति हुई थी। इस वंश की स्थापना श्रीगुप्त ने की थी लेकिन इसका वास्तविक विस्तार चन्द्रगुप्त प्रथम के समय में हुआ। समुद्रगुप्त इस वंश का सबसे प्रतापी राजा था जिसे उसकी सैन्य विजयों के कारण भारत का नेपोलियन भी कहा जाता है। गुप्त शासकों ने उत्तर भारत के एक बड़े हिस्से पर शासन किया और दक्षिण के राज्यों को अपनी अधीनता स्वीकार करने पर मजबूर किया। चन्द्रगुप्त द्वितीय जिसे विक्रमादित्य के नाम से जाना जाता है के दरबार में नवरत्न निवास करते थे जिनमें कालिदास जैसे महान कवि शामिल थे। इसी युग में आर्यभट्ट ने शून्य का आविष्कार किया और बताया कि पृथ्वी अपनी धुरी पर घूमती है जो विज्ञान के क्षेत्र में एक महान उपलब्धि थी। वराहमिहिर ने खगोल विज्ञान और ज्योतिष में महत्वपूर्ण योगदान दिया जबकि सुश्रुत ने चिकित्सा शास्त्र में नई पद्धतियाँ विकसित कीं। गुप्त काल में ही रामायण और महाभारत जैसे महाकाव्यों को अंतिम रूप दिया गया और अनेक पुराणों की रचना हुई। स्थापत्य कला के क्षेत्र में मंदिरों के निर्माण की नागर शैली का विकास इसी समय हुआ था। अजंता और एलोरा की गुफाओं की चित्रकारी गुप्तकालीन कला की श्रेष्ठता का प्रमाण देती है। इस दौरान भारत आर्थिक रूप से बहुत समृद्ध था और सोने के सिक्कों का व्यापक प्रचलन था जिन्हें दीनार कहा जाता था। विदेशी यात्री फाह्यान ने गुप्त शासन की प्रशंसा करते हुए लिखा कि यहाँ की जनता सुखी और सुरक्षित है। गुप्त राजाओं ने वैष्णव धर्म को संरक्षण दिया लेकिन वे अन्य धर्मों के प्रति भी सहिष्णु थे। उनके शासनकाल में संस्कृत भाषा को राजभाषा का गौरव प्राप्त हुआ और साहित्य की अनेक विधाओं का विकास हुआ। नालंदा और तक्षशिला जैसे विश्वविद्यालय इस युग में शिक्षा के महान केंद्र बन गए थे जहाँ विश्व भर से छात्र अध्ययन के लिए आते थे। हालांकि हूणों के लगातार आक्रमणों और आंतरिक कलह के कारण इस महान साम्राज्य का अंततः पतन हो गया। गुप्त काल की सांस्कृतिक विरासत आज भी भारतीय समाज और दर्शन का आधार बनी हुई है। इस युग ने भारत को विश्व के मानचित्र पर एक ज्ञानवान और समृद्ध राष्ट्र के रूप में स्थापित किया था। प्राचीन भारतीय उपलब्धियों का अधिकांश श्रेय गुप्तकालीन विद्वानों और राजाओं को ही जाता है। उनकी न्याय व्यवस्था और उदार शासन प्रणाली ने भविष्य के कई शासकों के लिए एक मार्गदर्शक का कार्य किया। अतः गुप्त काल भारतीय अस्मिता का एक उज्जवल अध्याय है।",
+
+            "विजयनगर साम्राज्य दक्षिण भारत के इतिहास का एक गौरवशाली अध्याय है जिसकी स्थापना 1336 में हरिहर और बुक्का नामक दो भाइयों ने की थी। यह साम्राज्य तुंगभद्रा नदी के तट पर स्थित था और अपनी समृद्धि और स्थापत्य कला के लिए प्रसिद्ध था। इस साम्राज्य का सबसे महान शासक कृष्णदेव राय था जिसके शासनकाल में कला और साहित्य को विशेष प्रोत्साहन मिला। उनके दरबार में 'अष्टदिग्गज' नामक आठ प्रसिद्ध कवि थे जिनमें तेनालीराम अपनी बुद्धिमत्ता के लिए आज भी याद किए जाते हैं। विजयनगर के शासकों ने दक्षिण में हिंदू संस्कृति और धर्म की रक्षा करने में महत्वपूर्ण भूमिका निभाई थी। राजधानी हम्पी की भव्यता का वर्णन अनेक विदेशी यात्रियों जैसे अब्दुल रज्जाक और डोमिंगो पेस ने अपनी लेखनी में किया है। यहाँ के मंदिरों की वास्तुकला विशेष रूप से हम्पी का विट्ठल स्वामी मंदिर और विरुपाक्ष मंदिर अपनी बारीक नक्काशी के लिए विख्यात हैं। विजयनगर एक बहुत बड़ा व्यापारिक केंद्र था जहाँ से मसालों और कीमती पत्थरों का निर्यात अरब और यूरोपीय देशों को किया जाता था। साम्राज्य की सैन्य शक्ति बहुत ही सुदृढ़ थी और उनके पास एक विशाल हाथी सेना भी थी। कृष्णदेव राय ने कृषि के विकास के लिए अनेक बांधों और जलाशयों का निर्माण कराया जिससे दक्कन के शुष्क क्षेत्रों में भी खेती संभव हो सकी। हालांकि 1565 के तालीकोटा के युद्ध में दक्कन के सुल्तानों के संघ ने विजयनगर को पराजित कर दिया जिससे इस महान वैभवशाली शहर का पतन हो गया। युद्ध के बाद हम्पी को बुरी तरह लूटा गया और उसे खंडहरों में बदल दिया गया जो आज यूनेस्को की विश्व धरोहर सूची में शामिल हैं। विजयनगर साम्राज्य का इतिहास साहस और सांस्कृतिक पुनर्जागरण की एक अद्भुत मिसाल है। उन्होंने दक्षिण भारत में प्रशासनिक व्यवस्था को मजबूत किया और स्थानीय भाषाओं जैसे तेलुगु और कन्नड़ को बढ़ावा दिया। विजयनगर की हार ने दक्षिण भारत की राजनीति में एक बड़ा शून्य पैदा कर दिया था जिसका फायदा बाद में अन्य शक्तियों ने उठाया। फिर भी विजयनगर के गौरवशाली अवशेष आज भी हमें उसकी प्राचीन महानता की याद दिलाते हैं। उनके द्वारा विकसित की गई वास्तुकला की विजयनगर शैली भारतीय स्थापत्य का एक अनूठा उदाहरण है। यह साम्राज्य न केवल अपनी सैन्य शक्ति के लिए बल्कि अपनी धार्मिक सहिष्णुता और व्यापारिक कौशल के लिए भी जाना जाता था। मध्यकालीन भारत में विजयनगर का उदय हिंदू राष्ट्रवाद और सांस्कृतिक अस्मिता की रक्षा का एक महत्वपूर्ण प्रयास था। इसकी गाथा आज भी दक्षिण भारतीय लोककथाओं और इतिहास की पुस्तकों में बड़े सम्मान के साथ पढ़ाई जाती है।",
+
+            "महात्मा गांधी भारतीय स्वतंत्रता आंदोलन के सबसे प्रमुख नेता थे जिन्होंने सत्य और अहिंसा के मार्ग पर चलकर भारत को आजादी दिलाई। 1915 में दक्षिण अफ्रीका से लौटने के बाद गांधी जी ने भारतीय राजनीति के स्वरूप को पूरी तरह से बदल दिया। उन्होंने साधारण जनता को स्वतंत्रता संग्राम से जोड़ा और इसे एक जन-आंदोलन बना दिया। चंपारण और खेड़ा के सफल प्रयोगों के बाद उन्होंने ब्रिटिश सरकार के खिलाफ असहयोग आंदोलन की शुरुआत की। 1930 में उनके नेतृत्व में शुरू हुई दांडी यात्रा ने नमक कानून को चुनौती दी और सविनय अवज्ञा आंदोलन को पूरे देश में फैला दिया। गांधी जी का मानना था कि आत्मबल और नैतिक शक्ति के सामने बड़ी से बड़ी शारीरिक शक्ति को भी झुकना पड़ता है। उन्होंने खादी और चरखे को स्वावलंबन का प्रतीक बनाया और विदेशी वस्तुओं के बहिष्कार का आह्वान किया। उनके जीवन की सादगी और उच्च विचारों ने करोड़ों भारतीयों को प्रभावित किया जिससे वे 'राष्ट्रपिता' के रूप में जाने गए। गांधी जी ने समाज से छुआछूत जैसी कुरीतियों को मिटाने के लिए 'हरिजन' सेवा का कार्य किया और महिलाओं की शिक्षा पर जोर दिया। 1942 में उनके द्वारा शुरू किए गए 'भारत छोड़ो आंदोलन' ने अंग्रेजों को भारत छोड़ने पर विवश कर दिया। गांधी जी के लिए स्वतंत्रता केवल राजनीतिक अधिकार नहीं थी बल्कि वह व्यक्ति के चरित्र निर्माण और आत्म-सुधार की एक प्रक्रिया थी। उन्होंने हिंदू-मुस्लिम एकता के लिए अपने प्राणों की बाजी लगा दी और सांप्रदायिक दंगों को रोकने के लिए उपवास किए। उनके द्वारा दी गई 'अहिंसा' की अवधारणा ने न केवल भारत बल्कि पूरी दुनिया के महान नेताओं जैसे मार्टिन लूथर किंग और नेल्सन मंडेला को भी प्रेरित किया। 15 अगस्त 1947 को जब भारत आजाद हुआ तब गांधी जी जश्न मनाने के बजाय दंगा प्रभावित क्षेत्रों में शांति स्थापित करने में लगे थे। उनके विचार आज भी उतने ही प्रासंगिक हैं जितने स्वतंत्रता संग्राम के दौरान थे। गांधी जी का जीवन ही उनका संदेश है जो हमें सिखाता है कि सत्य के मार्ग पर चलते हुए हम किसी भी बड़ी शक्ति को परास्त कर सकते हैं। यद्यपि 30 जनवरी 1948 को उनकी हत्या कर दी गई लेकिन उनके आदर्श आज भी जीवित हैं। भारत का संविधान और हमारे लोकतांत्रिक मूल्य गांधीवादी दर्शन से गहराई से प्रभावित हैं। उन्होंने सिखाया कि घृणा को केवल प्रेम से ही जीता जा सकता है। महात्मा गांधी के बिना भारतीय स्वतंत्रता का इतिहास अधूरा है क्योंकि उन्होंने ही भारत की आत्मा को जागृत किया था। उनकी विरासत को अक्षुण्ण रखना हर भारतीय का कर्तव्य है। वे एक ऐसे महापुरुष थे जिन्होंने बिना किसी अस्त्र-शस्त्र के इतिहास की धारा को मोड़ दिया था।",
+
+            "भक्ति आंदोलन मध्यकालीन भारत के इतिहास की एक अत्यंत महत्वपूर्ण सामाजिक और धार्मिक क्रांति थी जिसने समाज के हर वर्ग को प्रभावित किया। यह आंदोलन दक्षिण भारत में सातवीं शताब्दी के आसपास आलवार और नयनार संतों के माध्यम से शुरू हुआ था और धीरे-धीरे पूरे भारत में फैल गया। इस आंदोलन का मुख्य उद्देश्य ईश्वर की भक्ति को सरल बनाना और समाज में व्याप्त छुआछूत और बाहरी कर्मकांडों का विरोध करना था। भक्ति संतों ने संदेश दिया कि ईश्वर की प्राप्ति के लिए किसी मध्यस्थ या जटिल अनुष्ठानों की आवश्यकता नहीं है बल्कि शुद्ध हृदय से की गई प्रार्थना ही पर्याप्त है। कबीरदास इस आंदोलन के सबसे क्रांतिकारी कवि और संत थे जिन्होंने हिंदू और मुस्लिम दोनों धर्मों की बुराइयों पर कड़ा प्रहार किया। उन्होंने 'सबै भूमि गोपाल की' का संदेश देकर मानवतावादी धर्म की स्थापना की। इसी प्रकार गुरु नानक देव ने एक ओंकार और लंगर प्रथा के माध्यम से सामाजिक समानता का पाठ पढ़ाया जिससे आगे चलकर सिख धर्म का उदय हुआ। मीराबाई और सूरदास ने भगवान कृष्ण की भक्ति के माध्यम से प्रेम और समर्पण की नई परिभाषा गढ़ी। तुलसीदास द्वारा रचित रामचरितमानस ने घर-घर में राम की कथा पहुँचाई और समाज को नैतिक मूल्यों से जोड़ा। भक्ति आंदोलन ने स्थानीय भाषाओं जैसे अवधी, ब्रज, पंजाबी और बंगाली के विकास में बहुत बड़ा योगदान दिया क्योंकि संतों ने अपने उपदेश आम जनता की भाषा में ही दिए थे। इस आंदोलन के कारण समाज के निम्न वर्ग के लोगों में आत्म-सम्मान की भावना जागृत हुई और वे भी मुख्यधारा से जुड़ सके। सूफी संतों जैसे ख्वाजा मुईनुद्दीन चिश्ती और निजामुद्दीन औलिया ने भी संगीत और प्रेम के माध्यम से धार्मिक कट्टरता को कम किया और हिंदू-मुस्लिम एकता को बढ़ावा दिया। इन आंदोलनों ने भारतीय समाज को एक नई दिशा दी और उसे अधिक सहिष्णु और मानवीय बनाया। भक्ति संतों ने तर्क दिया कि ईश्वर हर मनुष्य के हृदय में निवास करता है इसलिए किसी के साथ भेदभाव करना पाप है। उनके भजन और दोहे आज भी भारतीय जनमानस में गहराई से रचे-बसे हैं। मध्यकाल के उस दौर में जब राजनीतिक स्थिरता कम थी तब इन संतों ने समाज को मानसिक और आध्यात्मिक संबल प्रदान किया। इस आंदोलन ने रूढ़िवादी परंपराओं को चुनौती दी और एक प्रगतिशील समाज की नींव रखी। आज भी हमारी संस्कृति और संगीत पर भक्ति आंदोलन का गहरा प्रभाव स्पष्ट रूप से देखा जा सकता है। यह केवल एक धार्मिक आंदोलन नहीं था बल्कि एक बड़ा सांस्कृतिक पुनर्जागरण था जिसने भारत की आत्मा को जीवित रखा। संतों के बलिदान और उनकी सरल वाणी ने करोड़ों लोगों के जीवन को नई रोशनी दी।",
+
+            "भारतीय संविधान विश्व का सबसे विशाल और व्यापक लिखित संविधान है जो 26 जनवरी 1950 को आधिकारिक रूप से लागू हुआ था। इसके निर्माण में डॉक्टर भीमराव अंबेडकर की भूमिका अत्यंत महत्वपूर्ण थी जिन्हें संविधान का जनक भी कहा जाता है। संविधान सभा ने लगभग तीन वर्षों के कठिन परिश्रम और विचार-विमर्श के बाद इसे तैयार किया था। भारतीय संविधान की सबसे बड़ी खूबी यह है कि इसमें विभिन्न देशों के अच्छे प्रावधानों को भारतीय परिस्थितियों के अनुसार शामिल किया गया है। यह हमें मौलिक अधिकार प्रदान करता है जो हर नागरिक की स्वतंत्रता और गरिमा की रक्षा सुनिश्चित करते हैं। इसके साथ ही इसमें नीति निर्देशक तत्वों का भी उल्लेख है जो सरकार को लोक कल्याणकारी राज्य बनाने के लिए निर्देशित करते हैं। संविधान ने भारत को एक संप्रभु, समाजवादी, धर्मनिरपेक्ष और लोकतांत्रिक गणराज्य घोषित किया है। इसमें केंद्र और राज्यों के बीच शक्तियों का स्पष्ट विभाजन किया गया है और एक स्वतंत्र न्यायपालिका की व्यवस्था की गई है ताकि कानून का शासन बना रहे। संविधान में संशोधनों का भी प्रावधान है जिससे इसे समय के अनुसार बदला जा सके और बदलती सामाजिक आवश्यकताओं को पूरा किया जा सके। आपातकाल की स्थिति में संविधान केंद्र सरकार को विशेष शक्तियाँ भी प्रदान करता है। व्यस्क मताधिकार के माध्यम से हर नागरिक को सरकार चुनने का समान अवसर दिया गया है जो हमारे लोकतंत्र की सबसे बड़ी शक्ति है। संविधान ने समाज से छुआछूत जैसी बुराइयों को अवैध घोषित किया और पिछड़ों के लिए आरक्षण की व्यवस्था कर सामाजिक न्याय का मार्ग प्रशस्त किया। भारतीय संविधान केवल एक कानूनी दस्तावेज नहीं है बल्कि यह करोड़ों भारतीयों की आशाओं और आकांक्षाओं का जीवंत प्रतीक है। यह हमें याद दिलाता है कि कानून की नज़र में सब समान हैं और किसी के साथ धर्म या जाति के आधार पर भेदभाव नहीं किया जा सकता। संविधान के प्रति निष्ठा रखना और इसके आदर्शों का पालन करना हर भारतीय नागरिक का परम कर्तव्य है। पिछले सात दशकों में भारतीय लोकतंत्र की सफलता का सबसे बड़ा श्रेय हमारे संविधान को ही जाता है जिसने देश की एकता और अखंडता को बनाए रखा है। हमारे राष्ट्रीय ध्वज और चिह्न की गरिमा भी इसी संविधान से जुड़ी हुई है। इसकी प्रस्तावना भारतीय शासन के मूल दर्शन को स्पष्ट करती है जो न्याय, स्वतंत्रता और समानता पर आधारित है। संविधान के कारण ही भारत आज दुनिया का सबसे बड़ा और स्थिर लोकतंत्र बना हुआ है। हमें अपने संविधान निर्माताओं की दूरदर्शिता पर गर्व होना चाहिए जिन्होंने एक ऐसा ढांचा तैयार किया जो आज भी हर संकट में देश का मार्गदर्शन करता है। संक्षेप में कहें तो संविधान भारत की आत्मा है।"
+            ],
+
+        };
+
+        let timeLeft = 900, timerStarted = false, timerInterval;
+        const typingArea = document.getElementById('typingArea'), sourceText = document.getElementById('sourceText'), langSelect = document.getElementById('langSelect'), lessonSelect = document.getElementById('lessonSelect');
+
+        function updateLessonList() {
+            const lang = langSelect.value;
+            lessonSelect.innerHTML = "";
+            lessons[lang].forEach((_, i) => {
+                let opt = document.createElement("option"); opt.value = i; opt.text = `Lesson ${i + 1}`;
+                lessonSelect.add(opt);
+            });
+            loadLesson();
+        }
+
+        function loadLesson() { sourceText.innerText = lessons[langSelect.value][lessonSelect.value]; resetTest(); }
+
+        function resetTest() { clearInterval(timerInterval); timeLeft = 900; timerStarted = false; typingArea.value = ""; document.getElementById('timer').innerText = "Time Left 15:00"; }
+
+        function changeSize(dir) {
+            let curr = parseFloat(window.getComputedStyle(typingArea).fontSize);
+            let newSize = (dir === 0) ? 22 : curr + (dir * 2);
+            typingArea.style.fontSize = newSize + "px"; sourceText.style.fontSize = newSize + "px";
+        }
+
+        typingArea.addEventListener('keydown', function(e) {
+            if (langSelect.value === 'hi' && e.key.length === 1 && !e.ctrlKey && !e.altKey) {
+                e.preventDefault();
+                const char = inscriptMap[e.key];
+                if (char) {
+                    const start = this.selectionStart;
+                    this.value = this.value.substring(0, start) + char + this.value.substring(this.selectionEnd);
+                    this.selectionStart = this.selectionEnd = start + 1;
+                }
+            }
+            if (!timerStarted && e.key.length === 1) {
+                timerStarted = true;
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    let min = Math.floor(timeLeft / 60), sec = timeLeft % 60;
+                    document.getElementById('timer').innerText = `Time Left ${min}:${sec < 10 ? '0'+sec : sec}`;
+                    if (timeLeft <= 0) endTest();
+                }, 1000);
+            }
+        });
+
+        function endTest() {
+            clearInterval(timerInterval);
+            const sourceWords = sourceText.innerText.trim().split(/\s+/), typedWords = typingArea.value.trim().split(/\s+/);
+            let correct = 0;
+            typedWords.forEach((word, i) => { if(word === sourceWords[i]) correct++; });
+            const timeSpent = (900 - timeLeft) / 60;
+            
+            document.getElementById('resWpm').innerText = (correct / (timeSpent || 1)).toFixed(2);
+            document.getElementById('resAcc').innerText = typedWords.length > 0 ? ((correct / typedWords.length) * 100).toFixed(2) : 0;
+            document.getElementById('resCorrect').innerText = correct;
+            document.getElementById('resWrong').innerText = typedWords.length - correct;
+            document.getElementById('resDate').innerText = new Date().toLocaleDateString();
+            document.getElementById('resLang').innerText = langSelect.options[langSelect.selectedIndex].text;
+            
+            document.getElementById('testPage').style.display = "none";
+            document.getElementById('resultPage').style.display = "flex";
+        }
+
+        window.onload = updateLessonList;
+    </script>
+</body>
+</html>
