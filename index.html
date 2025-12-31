@@ -124,7 +124,7 @@
 
             <div class="user-info">
                 <img src="https://www.w3schools.com/howto/img_avatar.png" class="user-icon" alt="Avatar">
-                <div class="user-details">ROLL NO : 55689<br>NAME : DUMMY_USER</div>
+                <div class="user-details">ROLL NO : 9792<br>NAME : TypingDost</div>
             </div>
 
             <div class="timer-box" id="timer">Time Left 15:00</div>
@@ -148,8 +148,8 @@
             <p style="font-style: italic;">Official Performance Report</p>
             <hr>
             <div style="text-align: left; display: inline-block; width: 80%; margin: 20px 0; font-size: 18px;">
-                <p><strong>Candidate Name:</strong> DUMMY_USER</p>
-                <p><strong>Roll Number:</strong> 55689</p>
+                <p><strong>Candidate Name:</strong> TypingDost</p>
+                <p><strong>Roll Number:</strong> 9792</p>
                 <p><strong>Date:</strong> <span id="resDate"></span></p>
                 <p><strong>Language:</strong> <span id="resLang"></span></p>
             </div>
@@ -166,11 +166,16 @@
     </div>
 
     <script>
-        const inscriptMap = {
-            'q':'ौ','w':'ै','e':'ा','r':'ी','t':'ू','y':'ब','u':'ह','i':'ग','o':'द','p':'ज','[':'ड',']':'ृ',
-            'a':'ो','s':'े','d':'्','f':'ि','g':'ु','h':'प','j':'र','k':'क','l':'त',';':'च','\'':'ट',
-            'z':'़','x':'ं','c':'म','v':'न','b':'व','n':'ल','m':'स',',':'य','.':'।','/':'य','Q':'औ','W':'ऐ','E':'आ','R':'ई','T':'ऊ','Y':'भ','U':'ङ','I':'घ','O':'ध','P':'झ','A':'ओ','S':'ए','D':'अ','F':'इ','G':'उ','H':'फ','J':'ऱ','K':'ख','L':'थ',':':'छ','"':'ठ','Z':'़','X':'ं','C':'ण','V':'न','B':'व','N':'ल','M':'श','<':'य','>':'।','?':'य',' ':' '
-        };
+      const inscriptMap = {
+    'q':'ौ','w':'ै','e':'ा','r':'ी','t':'ू','y':'ब','u':'ह','i':'ग','o':'द','p':'ज','[':'ड',']':'़',
+    'a':'ो','s':'े','d':'्','f':'ि','g':'ु','h':'प','j':'र','k':'क','l':'त',';':'च','\\':'ॉ','\'':'ट',
+    'x':'ं','c':'म','v':'न','b':'व','n':'ल','m':'स',',':',','.':'.','/':'य',
+    'Q':'औ','W':'ऐ','E':'आ','R':'ई','T':'ऊ','Y':'भ','U':'ङ','I':'घ','O':'ध','P':'झ',
+    'A':'ओ','S':'ए','D':'अ','F':'इ','G':'उ','H':'फ','J':'ऱ','K':'ख','L':'थ',':':'छ','"':'ठ',
+    'Z':'','X':'ँ','C':'ण','V':'','B':'','N':'ळ','M':'श','<':'ष','>':'।','?':'य़',
+    '{':'ढ','}':'ञ','%':'ज्ञ','^':'त्र','&':'क्ष','*':'श्र','(':'(',')':')','_':'ः','+':'ऋ',
+    '$':'र्','्#':'्र','@':'ॅ','!':'ऍ', ' ': ' '
+};
 
         const lessons = {
             en: [
